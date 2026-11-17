@@ -8,7 +8,8 @@ COPY src ./src
 RUN npm run build
 
 FROM nginx:stable-alpine
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+ENV SGRA_BACKEND_ADDRESS=host.docker.internal:8080 NGINX_ENVSUBST_FILTER="^SGRA_BACKEND_ADDRESS$"
+COPY docker/nginx.conf.template /etc/nginx/templates/default.conf.template
 COPY --from=build /app/dist/Frontend/browser/ /usr/share/nginx/html/
 EXPOSE 80
 HEALTHCHECK --interval=15s --timeout=3s --start-period=5s \

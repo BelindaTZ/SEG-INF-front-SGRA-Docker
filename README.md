@@ -2,28 +2,24 @@
 
 ## Docker Desktop
 
-Abre Docker Desktop en modo de contenedores Linux. Coloca `SEG-INF-front-SGRA-Docker` y
-`SEG-INF-back-SGRA-Docker` en la misma carpeta. Prepara el archivo `SEG-INF-back-SGRA-Docker/.env.docker`
-siguiendo la sección Docker Desktop del README del backend.
-
-Para iniciar el sistema completo, usa el `compose.yml` de la raíz de
-`SEG-INF-front-SGRA-Docker`:
+Abre Docker Desktop en modo de contenedores Linux. Desde la raíz de este
+repositorio, usa `compose.yml` para iniciar solo el frontend:
 
 ```powershell
 docker compose up --build -d
 docker compose ps
 ```
 
-Abre [SGRA](http://localhost:4200). Compose crea dos contenedores en el
-proyecto `sgra`. Nginx sirve la compilación de Angular, conserva la
-navegación a rutas internas al recargar y reenvía `/api` y `/archivos-sgra`
-al backend por la red interna. El navegador usa el mismo origen para las
-cookies de sesión. El backend no publica su puerto en el host.
+Abre [SGRA](http://localhost:4200). Nginx sirve la compilación y conserva las
+rutas internas al recargar. Para usar el inicio de sesión y las demás
+funciones de SGRA, inicia el backend desde el `compose.yml` de
+`SEG-INF-back-SGRA-Docker` después de completar su `.env.docker`. Nginx
+reenvía `/api` y `/archivos-sgra` a `host.docker.internal:8080` y conserva
+el mismo origen en el navegador para las cookies de sesión.
 
-Usa `docker compose logs -f backend` para consultar el arranque y
-`docker compose down` para detener ambos servicios. Si necesitas cambiar la
-ubicación del backend, configura `SGRA_BACKEND_DIR`. Si el puerto 4200 está
-ocupado, configura `SGRA_PORT` antes de ejecutar Compose.
+Si cambias `SGRA_BACKEND_PORT`, usa el mismo valor al iniciar ambos
+proyectos. Usa `SGRA_PORT` para cambiar el puerto local del frontend.
+`docker compose down` en esta carpeta detiene solo el frontend.
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
 
