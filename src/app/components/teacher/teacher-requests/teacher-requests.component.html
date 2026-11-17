@@ -1,0 +1,399 @@
+
+<div class="container-fluid">
+
+  <!-- Header -->
+  <div class="mb-4">
+    <div class="d-flex align-items-center gap-3">
+      <div class="header-icon"><i class="bi bi-inbox-fill"></i></div>
+      <div>
+        <h3 class="fw-bold text-dark mb-0">Solicitudes de Refuerzo</h3>
+        <p class="text-muted mb-0">Revisa y gestiona las solicitudes de refuerzo académico recibidas</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Summary chips -->
+  <div class="row g-2 mb-3">
+    @for (chip of summaryChips; track chip.label) {
+      <div class="col-6 col-lg-4">
+        <div class="chip-box bg-white shadow-sm rounded-3 p-3 d-flex justify-content-between align-items-center">
+          <div>
+            <div class="text-muted small">{{ chip.label }}</div>
+            <div class="fw-bold fs-4" [style.color]="chip.color">{{ chip.value }}</div>
+          </div>
+          <div class="chip-icon d-flex align-items-center justify-content-center rounded-circle"
+               [style.background-color]="chip.bg">
+            <i class="bi" [ngClass]="chip.icon" [style.color]="chip.color"></i>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Table -->
+  <div class="card border shadow-sm">
+    <div class="card-body">
+      @if (loading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-success" role="status"></div>
+          <p class="text-muted mt-2 mb-0">Cargando solicitudes...</p>
+        </div>
+      } @else {
+
+        <!-- Filtros + layout toggle en la misma fila -->
+        <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between mb-4">
+          <div class="d-flex flex-wrap gap-2 align-items-center">
+            <span class="small fw-semibold text-muted me-1">
+              <i class="bi bi-funnel me-1"></i>Filtrar por estado:
+            </span>
+            <button class="filter-tag"
+                    [class.filter-tag--active]="filters.statusId === null"
+                    (click)="filters.statusId = null; load()">
+              <i class="bi bi-grid-fill me-1"></i>Todos
+              <span class="filter-tag__count">{{ totalCount }}</span>
+            </button>
+            <button class="filter-tag"
+                    [class.filter-tag--active]="filters.statusId === 1"
+                    (click)="filters.statusId = 1; load()">
+              <i class="bi bi-hourglass-split me-1"></i>Pendiente
+            </button>
+            <button class="filter-tag"
+                    [class.filter-tag--active]="filters.statusId === 2"
+                    (click)="filters.statusId = 2; load()">
+              <i class="bi bi-check-circle-fill me-1"></i>Aceptada
+            </button>
+            <button class="filter-tag"
+                    [class.filter-tag--active]="filters.statusId === 3"
+                    (click)="filters.statusId = 3; load()">
+              <i class="bi bi-x-circle-fill me-1"></i>Rechazada
+            </button>
+            <button class="filter-tag"
+                    [class.filter-tag--active]="filters.statusId === 4"
+                    (click)="filters.statusId = 4; load()">
+              <i class="bi bi-ban me-1"></i>Cancelada
+            </button>
+            <button class="filter-tag"
+                    [class.filter-tag--active]="filters.statusId === 5"
+                    (click)="filters.statusId = 5; load()">
+              <i class="bi bi-patch-check-fill me-1"></i>Completada
+            </button>
+          </div>
+
+          <!-- Layout toggle alineado a la derecha -->
+          <div class="d-flex gap-1 flex-shrink-0">
+            <button class="btn btn-sm border" [ngClass]="colClass === 'col-12' ? 'btn-secondary' : 'btn-outline-secondary'"
+                    title="1 columna" (click)="colClass = 'col-12'">
+              <i class="bi bi-view-list"></i>
+            </button>
+            <button class="btn btn-sm border" [ngClass]="colClass === 'col-12 col-md-6' ? 'btn-secondary' : 'btn-outline-secondary'"
+                    title="2 columnas" (click)="colClass = 'col-12 col-md-6'">
+              <i class="bi bi-grid"></i>
+            </button>
+            <button class="btn btn-sm border" [ngClass]="colClass === 'col-12 col-md-4' ? 'btn-secondary' : 'btn-outline-secondary'"
+                    title="3 columnas" (click)="colClass = 'col-12 col-md-4'">
+              <i class="bi bi-grid-3x3-gap"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cards grid -->
+        @if (rows.length === 0) {
+          <div class="text-center py-5 text-muted">
+            <i class="bi bi-inbox display-4 d-block mb-2 opacity-25"></i>
+            Sin solicitudes para mostrar.
+          </div>
+        }
+        <div class="row g-3">
+          @for (r of rows; track r.requestId) {
+            <div [ngClass]="colClass">
+              <article class="req-card" (click)="openDetail(r)">
+
+                <!-- Cabecera: tipo + fecha -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="req-badge req-badge--{{ r.isGroupal ? 'grupal' : 'individual' }}">
+                    <i class="bi bi-{{ r.isGroupal ? 'people-fill' : 'person-fill' }} me-1"></i>{{ r.sessionType }}
+                  </span>
+                  <small class="text-muted">
+                    <i class="bi bi-calendar3 me-1"></i>{{ r.createdAt | date:'yyyy-MM-dd' }}
+                  </small>
+                </div>
+
+                <!-- Estudiante -->
+                <h6 class="fw-bold text-dark mb-1">
+                  <i class="bi bi-person-vcard-fill me-2 req-student-icon"></i>{{ r.studentName }}
+                </h6>
+
+                <!-- Asignatura -->
+                <div class="text-muted small mb-3">
+                  <i class="bi bi-book-half me-2"></i>{{ r.subjectName }}
+                </div>
+
+                <!-- Motivo -->
+                @if (r.reason) {
+                  <div class="text-muted small mb-3 text-truncate">
+                    <i class="bi bi-chat-quote me-2"></i>{{ r.reason }}
+                  </div>
+                }
+
+                <!-- Estado + participantes -->
+                <div class="d-flex align-items-center justify-content-between">
+                  <span class="badge rounded-pill" [ngClass]="statusBadge(r.statusId)">{{ r.statusName }}</span>
+                  <small class="text-muted">
+                    <i class="bi bi-people me-1"></i>
+                    {{ r.participantCount }} {{ r.isGroupal ? 'participantes' : 'participante' }}
+                  </small>
+                </div>
+
+                <!-- Pie: ref + acciones -->
+                <div class="req-footer" (click)="$event.stopPropagation()">
+                  <small class="text-muted">
+                    <i class="bi bi-hash me-1"></i>Ref. #{{ r.requestId }}
+                  </small>
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-sm btn-outline-secondary border" title="Ver detalle" (click)="openDetail(r)">
+                      <i class="bi bi-eye-fill"></i>
+                    </button>
+                    @if (r.statusId === 1) {
+                      <button class="btn btn-sm btn-success" title="Aceptar" (click)="openAccept(r)">
+                        <i class="bi bi-check-circle-fill"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger border" title="Rechazar" (click)="openReject(r)">
+                        <i class="bi bi-x-circle-fill"></i>
+                      </button>
+                    }
+                    @if (r.statusId === 2) {
+                      <button class="btn btn-sm btn-outline-warning border" title="Reprogramar" (click)="openReschedule(r)">
+                        <i class="bi bi-calendar2-event-fill"></i>
+                      </button>
+                      <button class="btn btn-sm btn-outline-danger border" title="Cancelar" (click)="openCancel(r)">
+                        <i class="bi bi-ban"></i>
+                      </button>
+                    }
+                  </div>
+                </div>
+
+              </article>
+            </div>
+          }
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+          <div class="text-muted small">Página {{ page }} de {{ totalPages }} · Total: {{ totalCount }}</div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary btn-sm border" [disabled]="page <= 1" (click)="goTo(page - 1)">
+              <i class="bi bi-chevron-left"></i> Anterior
+            </button>
+            <button class="btn btn-outline-secondary btn-sm border" [disabled]="page >= totalPages" (click)="goTo(page + 1)">
+              Siguiente <i class="bi bi-chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Detail -->
+@if (activeModal === 'detail' && selected) {
+  <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,.5)">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border">
+        <div class="modal-header border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon bg-success-subtle text-success"><i class="bi bi-file-earmark-person-fill"></i></div>
+            <div>
+              <h5 class="modal-title fw-bold mb-0">Solicitud <span class="text-muted fw-normal fs-6 ms-1">#{{ selected.requestId }}</span></h5>
+              <small class="text-muted">{{ selected.subjectName }}</small>
+            </div>
+          </div>
+          <button class="btn-close ms-auto" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-6"><span class="label">Estudiante</span><strong class="d-block">{{ selected.studentName }}</strong></div>
+            <div class="col-6"><span class="label">Asignatura</span><strong class="d-block">{{ selected.subjectName }}</strong></div>
+            <div class="col-6"><span class="label">Tipo de sesión</span><strong class="d-block">{{ selected.sessionType }}</strong></div>
+            <div class="col-6"><span class="label">Participantes</span><strong class="d-block">{{ selected.participantCount }}</strong></div>
+            <div class="col-12"><span class="label">Motivo</span><strong class="d-block">{{ selected.reason }}</strong></div>
+            <div class="col-6"><span class="label">Fecha solicitud</span><strong class="d-block">{{ selected.createdAt | date:'dd/MM/yyyy HH:mm' }}</strong></div>
+            <div class="col-6">
+              <span class="label">Estado</span>
+              <span class="badge rounded-pill" [ngClass]="statusBadge(selected.statusId)">{{ selected.statusName }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top">
+          @if (selected.statusId === 1) {
+            <button class="btn btn-outline-danger" (click)="openReject(selected)"><i class="bi bi-x-circle-fill me-1"></i>Rechazar</button>
+            <button class="btn btn-success" (click)="openAccept(selected)"><i class="bi bi-check-circle-fill me-1"></i>Aceptar</button>
+          }
+          @if (selected.statusId === 2) {
+            <button class="btn btn-outline-danger me-auto" (click)="openCancel(selected)"><i class="bi bi-ban me-1"></i>Cancelar</button>
+            <button class="btn btn-outline-success" (click)="openReschedule(selected)"><i class="bi bi-calendar2-event-fill me-1"></i>Reprogramar</button>
+          }
+          @if (selected.statusId !== 1 && selected.statusId !== 2) {
+            <button class="btn btn-outline-secondary" (click)="closeModal()">Cerrar</button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL: Accept / Reschedule (RF10, RF11) -->
+@if ((activeModal === 'accept' || activeModal === 'reschedule') && selected) {
+  <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,.5)">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content border">
+        <div class="modal-header border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon bg-success-subtle text-success"><i class="bi bi-calendar2-check-fill"></i></div>
+            <h5 class="modal-title fw-bold mb-0">
+              {{ activeModal === 'accept' ? 'Aceptar solicitud' : 'Reprogramar sesión' }}
+              <span class="text-muted fw-normal fs-6 ms-2">#{{ selected.requestId }}</span>
+            </h5>
+          </div>
+          <button class="btn-close" (click)="closeModal()" [disabled]="busy"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">
+            {{ activeModal === 'accept'
+              ? 'Define fecha, hora de inicio y fin, modalidad y duración para programar la sesión de refuerzo.'
+              : 'Actualiza los datos de programación. Solo disponible para solicitudes Aceptadas.' }}
+          </p>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Fecha programada <span class="text-danger">*</span></label>
+              <input type="date" class="form-control border" [(ngModel)]="scheduleForm.scheduledDate" [min]="todayStr" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small mb-1">Horario <span class="text-danger">*</span></label>
+              <div class="d-flex align-items-center gap-3 flex-wrap">
+                <input type="time" class="form-control form-control-sm time-input"
+                  [(ngModel)]="scheduleForm.startTime" (ngModelChange)="onTimeChange()" />
+                <i class="bi bi-arrow-right text-secondary fs-5"></i>
+                <input type="time" class="form-control form-control-sm time-input"
+                  [(ngModel)]="scheduleForm.endTime" (ngModelChange)="onTimeChange()" />
+              </div>
+            </div>
+
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Modalidad <span class="text-danger">*</span></label>
+              <select class="form-select border" [(ngModel)]="scheduleForm.modalityId" (ngModelChange)="onModalityChange()">
+                @for (m of modalities; track m.idModality) {
+                  <option [ngValue]="m.idModality">{{ m.modality }}</option>
+                }
+              </select>
+            </div>
+            @if (scheduleForm.modalityId === presencialId) {
+              <div class="col-md-6">
+                <label class="form-label fw-semibold small">Tipo de área de trabajo <span class="text-danger">*</span></label>
+                @if (loadingWorkAreaTypes) {
+                  <div class="d-flex align-items-center gap-2 mt-1">
+                    <span class="spinner-border spinner-border-sm text-secondary"></span>
+                    <small class="text-muted">Cargando áreas...</small>
+                  </div>
+                } @else if (workAreaTypesError) {
+                  <div class="alert alert-danger py-1 px-2 small mb-0">
+                    <i class="bi bi-exclamation-circle me-1"></i>
+                    Error al cargar tipos de área.
+                    <button type="button" class="btn btn-link btn-sm p-0 ms-1" (click)="retryWorkAreaTypes()">Reintentar</button>
+                  </div>
+                } @else {
+                  <select class="form-select border" [(ngModel)]="scheduleForm.workAreaTypeId">
+                    <option [ngValue]="null" disabled selected>Selecciona un tipo...</option>
+                    @for (type of workAreaTypes; track $index) {
+                      <option [ngValue]="type.workAreaTypeId">{{ type.workAreaType }}</option>
+                    }
+                  </select>
+                  @if (workAreaTypes.length === 0) {
+                    <div class="form-text text-warning">No se encontraron tipos de área.</div>
+                  }
+                }
+              </div>
+            }
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Observación <span class="text-muted fw-normal">(opcional)</span></label>
+              <textarea class="form-control border" rows="2" [(ngModel)]="scheduleForm.reason"
+                        placeholder="Notas adicionales o motivo de la programación"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top">
+          <button class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="busy">Cancelar</button>
+          <button class="btn btn-success" (click)="submitSchedule()" [disabled]="busy || !scheduleFormValid()">
+            @if (busy) { <span class="spinner-border spinner-border-sm me-2"></span> }
+            <i class="bi bi-calendar2-check-fill me-1"></i>
+            {{ activeModal === 'accept' ? 'Aceptar y programar' : 'Confirmar reprogramación' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL: Reject (RF10) -->
+@if (activeModal === 'reject' && selected) {
+  <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,.5)">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border">
+        <div class="modal-header border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon bg-danger-subtle text-danger"><i class="bi bi-x-circle-fill"></i></div>
+            <h5 class="modal-title fw-bold mb-0">Rechazar solicitud <span class="text-muted fw-normal fs-6 ms-2">#{{ selected.requestId }}</span></h5>
+          </div>
+          <button class="btn-close" (click)="closeModal()" [disabled]="busy"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">Puedes registrar un motivo de rechazo (opcional).</p>
+          <label class="form-label fw-semibold small">Motivo <span class="text-muted fw-normal">(opcional)</span></label>
+          <textarea class="form-control border" rows="3" [(ngModel)]="reasonText"
+                    placeholder="Ej: No tengo disponibilidad en ese horario"></textarea>
+        </div>
+        <div class="modal-footer border-top">
+          <button class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="busy">Cancelar</button>
+          <button class="btn btn-danger" (click)="submitReject()" [disabled]="busy">
+            @if (busy) { <span class="spinner-border spinner-border-sm me-2"></span> }
+            <i class="bi bi-x-circle-fill me-1"></i>Confirmar rechazo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL: Cancel (RF15) -->
+@if (activeModal === 'cancel' && selected) {
+  <div class="modal fade show d-block" tabindex="-1" style="background:rgba(0,0,0,.5)">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border">
+        <div class="modal-header border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            <div class="modal-icon bg-danger-subtle text-danger"><i class="bi bi-ban"></i></div>
+            <h5 class="modal-title fw-bold mb-0">Cancelar sesión <span class="text-muted fw-normal fs-6 ms-2">#{{ selected.requestId }}</span></h5>
+          </div>
+          <button class="btn-close" (click)="closeModal()" [disabled]="busy"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">
+            Esta acción cancelará la sesión programada. Puedes registrar un motivo (opcional).
+          </p>
+          <label class="form-label fw-semibold small">Motivo <span class="text-muted fw-normal">(opcional)</span></label>
+          <textarea class="form-control border" rows="3" [(ngModel)]="reasonText"
+                    placeholder="Ej: El docente no puede asistir"></textarea>
+        </div>
+        <div class="modal-footer border-top">
+          <button class="btn btn-outline-secondary" (click)="closeModal()" [disabled]="busy">No cancelar</button>
+          <button class="btn btn-danger" (click)="submitCancel()" [disabled]="busy">
+            @if (busy) { <span class="spinner-border spinner-border-sm me-2"></span> }
+            <i class="bi bi-ban me-1"></i>Sí, cancelar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+

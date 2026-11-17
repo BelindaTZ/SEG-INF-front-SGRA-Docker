@@ -1,0 +1,245 @@
+:host {
+  --sgra-primary: #1B7505;
+  --sgra-primary-dark: #124d1c;
+}
+
+/* ── Sidebar ── */
+.coord-sidebar {
+  width: 17.5rem;
+  background-color: var(--sgra-primary);
+  transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  overflow: hidden;
+  flex-shrink: 0;
+  z-index: 1050;
+}
+
+/* ── Escritorio: colapso estrecho ── */
+.coord-sidebar.collapsed {
+  width: 5rem;
+}
+
+.coord-sidebar.collapsed .brand-text,
+.coord-sidebar.collapsed .nav-label {
+  display: none;
+}
+
+.coord-sidebar.collapsed .nav-icon {
+  margin-right: 0;
+}
+
+.sidebar-header {
+  transition: padding 0.3s ease-in-out;
+}
+
+.coord-sidebar.collapsed .sidebar-header {
+  padding: 1rem !important;
+}
+
+/* ── Backdrop (overlay móvil) ── */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1040;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── MÓVIL (< 992 px): sidebar como drawer fijo ── */
+@media (max-width: 991.98px) {
+  .coord-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 17.5rem !important; /* siempre ancho completo en móvil */
+    transform: translateX(-100%);
+  }
+
+  /* Cuando está abierto en móvil */
+  .coord-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* collapsed en móvil = oculto (ya lo gestiona transform) */
+  .coord-sidebar.collapsed .brand-text,
+  .coord-sidebar.collapsed .nav-label {
+    display: block; /* en móvil se muestran siempre */
+  }
+
+  .coord-sidebar.collapsed .nav-icon {
+    margin-right: 0.625rem;
+  }
+
+  .coord-sidebar.collapsed .sidebar-header {
+    padding: 1.5rem !important;
+  }
+}
+
+/* ── Nav icons & labels ── */
+.nav-icon {
+  font-size: 1.1rem;
+  margin-right: 0.625rem;
+  min-width: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* ── Nav links ── */
+.nav-link,
+.btn-logout {
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.9375rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.nav-link {
+  opacity: 0.85;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  opacity: 1;
+  transform: translateX(0.25rem);
+}
+
+.active-link {
+  background-color: var(--sgra-primary-dark) !important;
+  font-weight: 600;
+  opacity: 1;
+  border-left: 0.25rem solid #ffffff;
+  border-radius: 0.25rem 0.5rem 0.5rem 0.25rem;
+}
+
+/* ── Logout button ── */
+.btn-logout {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background-color: #9c5151;
+}
+
+/* ── Botón chevron en borde del sidebar ── */
+.sidebar-toggle-wrapper {
+  position: relative;
+  width: 0;
+  overflow: visible;
+  z-index: 1060;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle-btn {
+  position: absolute;
+  top: 4.5rem;
+  left: -13px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  background: var(--sgra-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.72rem;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--sgra-primary-dark);
+  border-color: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.btn-icon {
+  background-color: transparent;
+  border: none;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  color: #6c757d;
+  transition: background-color 0.2s;
+}
+
+.btn-icon:hover {
+  background-color: #f8f9fa;
+  color: var(--sgra-primary);
+}
+
+/* ── User avatar ── */
+.user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--sgra-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── Profile button ── */
+.btn-profile {
+  background-color: transparent;
+  transition: background-color 0.2s;
+  border-radius: 3.125rem;
+  padding: 0.3125rem 0.9375rem 0.3125rem 0.3125rem;
+  border: 1px solid #e0e0e0;
+}
+
+.btn-profile:hover {
+  background-color: #f8f9fa;
+}
+
+/* ── Profile Dropdown ── */
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 260px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 1050;
+}
+
+.profile-dropdown .dropdown-header p {
+  font-size: 1rem;
+}
+
+.profile-dropdown .dropdown-header span {
+  font-size: 0.9rem;
+}
+
+.profile-dropdown .dropdown-item {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.profile-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+}
+
+/* ── Responsive general ── */
+@media (max-width: 575.98px) {
+  .btn-profile {
+    padding: 0.3125rem;
+  }
+}

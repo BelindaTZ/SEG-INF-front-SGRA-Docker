@@ -1,0 +1,323 @@
+/* ── Variables locales ──────────────────────────────────────────────────── */
+:host {
+  --sgra-primary: #1B7505;
+}
+
+/* ── Encabezado ─────────────────────────────────────────────────────────── */
+.badge-module {
+  background-color: var(--sgra-primary);
+  color: #fff;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 0.5rem;
+}
+
+/* ── Step badge (círculo numerado) ──────────────────────────────────────── */
+.step-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background-color: var(--sgra-primary);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* ── Tarjetas de tipo de reporte ────────────────────────────────────────── */
+.report-type-card {
+  background: #fff;
+  border: 2px solid #e9ecef;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+
+.report-type-card:hover {
+  border-color: var(--card-color, var(--sgra-primary));
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.report-type-card.selected {
+  border-color: var(--card-color, var(--sgra-primary));
+  background: color-mix(in srgb, var(--card-color, var(--sgra-primary)) 6%, white);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.report-icon-wrap {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex-shrink: 0;
+  background-color: var(--card-color, var(--sgra-primary));
+}
+
+/* ── Column switch ──────────────────────────────────────────────────────── */
+.column-switch .form-check-input:checked {
+  background-color: var(--sgra-primary);
+  border-color: var(--sgra-primary);
+}
+
+/* ── Selector de tipo de gráfico ────────────────────────────────────────── */
+.chart-type-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(5rem, 1fr));
+  gap: 0.5rem;
+}
+
+.chart-type-btn {
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #6c757d;
+}
+
+.chart-type-btn:hover {
+  border-color: var(--sgra-primary);
+  color: var(--sgra-primary);
+  background: #f0faf0;
+}
+
+.chart-type-btn.active {
+  border-color: var(--sgra-primary);
+  background: var(--sgra-primary);
+  color: #fff;
+}
+
+/* ── Botones de formato ─────────────────────────────────────────────────── */
+.format-btn {
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.format-btn:hover {
+  border-color: #adb5bd;
+}
+
+.format-btn.active {
+  border-color: var(--sgra-primary);
+  background: color-mix(in srgb, var(--sgra-primary) 8%, white);
+  color: var(--sgra-primary);
+}
+
+/* ── Botones de descarga ─────────────────────────────────────────────────── */
+.btn-pdf-dl {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+.btn-pdf-dl:hover:not(:disabled) { background: #b02a37; color: #fff; }
+.btn-pdf-dl:disabled { opacity: 0.6; }
+
+.btn-excel-dl {
+  background: #198754;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+.btn-excel-dl:hover:not(:disabled) { background: #146c43; color: #fff; }
+.btn-excel-dl:disabled { opacity: 0.6; }
+
+/* ── Vista previa ───────────────────────────────────────────────────────── */
+.preview-badge-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.preview-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ── Contenedor del gráfico ─────────────────────────────────────────────── */
+.chart-container {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+/* Gráfico de pastel: más grande para mayor legibilidad */
+.chart-container.chart-pie {
+  height: 460px;
+}
+
+.chart-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ── Tabla de vista previa ──────────────────────────────────────────────── */
+/* Encabezado formal del documento (vista previa) */
+.report-doc-header {
+  background: linear-gradient(135deg, #f5fbf4 0%, #edf7ec 100%);
+  border: 1px solid #c8e6c9;
+  border-left: 4px solid var(--sgra-primary);
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem 0.75rem;
+}
+
+.report-doc-logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 0.4rem;
+  border: 1px solid #dee2e6;
+  background: #fff;
+  padding: 2px;
+}
+
+.report-doc-logo-placeholder {
+  width: 56px;
+  height: 56px;
+  border: 2px dashed #ccc;
+  border-radius: 0.5rem;
+  flex-shrink: 0;
+  background: #f9f9f9;
+}
+
+.report-doc-inst-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--sgra-primary);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.report-doc-subtitle {
+  font-size: 0.82rem;
+  color: #444;
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
+.report-doc-meta {
+  min-width: 155px;
+  white-space: normal;
+  max-width: 200px;
+  text-align: right;
+}
+
+.report-doc-meta-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+  font-weight: 600;
+}
+
+.report-doc-meta-value {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.report-doc-divider {
+  border: 0;
+  border-top: 2px solid var(--sgra-primary);
+  opacity: 0.25;
+}
+
+.preview-table-wrap {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.preview-table-wrap thead th {
+  background-color: var(--sgra-primary);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  padding: 0.6rem 0.75rem;
+  border-bottom: none;
+}
+
+.preview-table-wrap tbody tr:nth-child(even) td {
+  background-color: #f8fcf8;
+}
+
+.preview-table-wrap tbody tr:hover td {
+  background-color: #edf7ec !important;
+}
+
+.preview-table-wrap tbody td {
+  font-size: 0.875rem;
+  border-color: #e9f5e9;
+  padding: 0.5rem 0.75rem;
+}
+
+/* ── Badge género ───────────────────────────────────────────────────────── */
+.gender-male {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.gender-female {
+  background-color: #fce7f3;
+  color: #9d174d;
+}
+
+/* ── Vista vacía ────────────────────────────────────────────────────────── */
+.empty-preview {
+  min-height: 300px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 991.98px) {
+  .preview-body {
+    min-height: 400px;
+  }
+
+  .chart-container {
+    height: 240px;
+  }
+
+  .chart-container.chart-pie {
+    height: 360px;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .chart-container {
+    height: 180px;
+  }
+
+  .chart-container.chart-pie {
+    height: 300px;
+  }
+}

@@ -1,0 +1,9 @@
+.git
+.idea
+.vscode
+.angular
+node_modules
+dist
+coverage
+.env*
+**/*.log

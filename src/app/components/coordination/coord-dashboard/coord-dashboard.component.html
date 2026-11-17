@@ -1,0 +1,145 @@
+<div class="container-fluid">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-start align-items-sm-center flex-wrap gap-3 mb-4">
+    <div>
+      <h3 class="mb-1 fw-bold">Dashboard</h3>
+      <p class="text-muted mb-0">Resumen del módulo de coordinación</p>
+    </div>
+    <button class="btn btn-report" routerLink="/coordinator/reports">
+      <i class="bi bi-file-earmark-arrow-down me-2"></i>Generar Reporte
+    </button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="row g-3 mb-4">
+
+    <!-- Porcentaje de Asistencia -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-0 shadow-sm kpi-card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-wrapper rounded-3 me-3 kpi-green">
+              <i class="bi bi-graph-up-arrow fs-4 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="card-title mb-0 text-muted">Porcentaje de Asistencia</h6>
+            </div>
+          </div>
+          <div class="display-5 fw-bold text-dark">
+            <ng-container *ngIf="!isLoading; else skeleton">{{ dashboard?.asistencia?.porcentajeAsistencia | number:'1.0-1' }}%</ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total de Solicitudes (gestionadas) -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-0 shadow-sm kpi-card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-wrapper rounded-3 me-3 kpi-blue">
+              <i class="bi bi-clipboard-check fs-4 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="card-title mb-0 text-muted">Total de Solicitudes</h6>
+            </div>
+          </div>
+          <div class="display-5 fw-bold text-dark">
+            <ng-container *ngIf="!isLoading; else skeleton">{{ dashboard?.kpis?.gestionadas }}</ng-container>
+          </div>
+          <small class="text-muted">Gestionadas</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total de Solicitudes (pendientes) -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-0 shadow-sm kpi-card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-wrapper rounded-3 me-3 kpi-purple">
+              <i class="bi bi-clipboard-pulse fs-4 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="card-title mb-0 text-muted">Total de Solicitudes</h6>
+            </div>
+          </div>
+          <div class="display-5 fw-bold text-dark">
+            <ng-container *ngIf="!isLoading; else skeleton">{{ dashboard?.kpis?.pendientes }}</ng-container>
+          </div>
+          <small class="text-muted">Pendientes</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasa de Inasistencia -->
+    <div class="col-12 col-sm-6 col-lg-3">
+      <div class="card h-100 border-0 shadow-sm kpi-card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="icon-wrapper rounded-3 me-3 kpi-amber">
+              <i class="bi bi-person-x-fill fs-4 text-white"></i>
+            </div>
+            <div class="flex-grow-1">
+              <h6 class="card-title mb-0 text-muted">Tasa de Inasistencia</h6>
+            </div>
+          </div>
+          <div class="display-5 fw-bold text-dark">
+            <ng-container *ngIf="!isLoading; else skeleton">{{ dashboard?.asistencia?.tasaInasistencia | number:'1.0-1' }}%</ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Fila 1: Gráfico de Barras + Donut -->
+  <div class="row g-3 mb-3">
+
+    <!-- Gráfico de Barras Apiladas: Solicitudes por materia -->
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-transparent border-0 p-4 pb-0">
+          <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-bar-chart-line text-success me-2"></i>Solicitudes por Materia
+          </h5>
+          <p class="text-muted mb-0 small mt-1">Gestionadas vs. Pendientes por materia</p>
+        </div>
+        <div class="card-body p-4">
+          <div class="chart-container-bar">
+            <canvas #barChartCanvas></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Donut: Presencial vs Virtual -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-transparent border-0 p-4 pb-0">
+          <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-pie-chart text-success me-2"></i>Modalidad
+          </h5>
+          <p class="text-muted mb-0 small mt-1">Presencial vs. Virtual</p>
+        </div>
+        <div class="card-body p-4 d-flex align-items-center justify-content-center">
+          <div class="chart-container-donut">
+            <canvas #donutChartCanvas></canvas>
+            <div class="donut-center">
+              <span class="fw-bold fs-4 text-dark">{{ dashboard?.kpis?.totalSolicitudes ?? 0 }}</span>
+              <small class="text-muted d-block">TOTAL</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<ng-template #skeleton>
+  <span class="placeholder col-4 rounded"></span>
+</ng-template>
+

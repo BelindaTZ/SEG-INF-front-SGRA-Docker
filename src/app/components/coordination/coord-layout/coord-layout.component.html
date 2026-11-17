@@ -1,0 +1,105 @@
+<div class="d-flex vh-100 bg-light">
+
+  <!-- OVERLAY BACKDROP (solo móvil) -->
+  @if (isOverlayOpen()) {
+    <div class="sidebar-backdrop" (click)="closeOverlay()"></div>
+  }
+
+  <!-- SIDEBAR -->
+  <aside class="coord-sidebar d-flex flex-column text-white shadow"
+         [class.collapsed]="isSidebarCollapsed()"
+         [class.mobile-open]="isOverlayOpen()">
+    <div class="sidebar-header text-center p-4 border-bottom border-light border-opacity-25">
+      <i class="bi bi-mortarboard-fill display-6 mb-2"></i>
+      <div class="brand-text">
+        <h6 class="m-0 fw-bold">SGRA</h6>
+        <small class="text-light opacity-75">Módulo de Coordinación</small>
+      </div>
+    </div>
+
+    <ul class="nav nav-pills flex-column mb-auto p-3 gap-2">
+      @for (item of navItems; track item.path) {
+        <li class="nav-item">
+          <a [routerLink]="item.path" routerLinkActive="active-link"
+             class="nav-link text-white d-flex align-items-center"
+             (click)="onNavClick()">
+            <i class="bi {{ item.icon }} nav-icon"></i>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+
+    <div class="p-3 border-top border-light border-opacity-25 mt-auto">
+      <button type="button" (click)="logout()" class="btn btn-logout text-white w-100 text-start d-flex align-items-center nav-link logout-link">
+        <i class="bi bi-box-arrow-left nav-icon"></i>
+        <span class="nav-label">Cerrar Sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Botón chevron en el borde del sidebar -->
+  <div class="sidebar-toggle-wrapper">
+    <button class="sidebar-toggle-btn" (click)="toggleSidebar()"
+            [title]="isSidebarCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
+      <i class="bi" [class.bi-chevron-left]="!isSidebarCollapsed()" [class.bi-chevron-right]="isSidebarCollapsed()"></i>
+    </button>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="flex-grow-1 d-flex flex-column overflow-hidden">
+
+    <!-- TOPBAR -->
+    <header class="bg-white shadow-sm p-3 d-flex justify-content-between align-items-center z-1">
+      <div class="d-flex align-items-center">
+        <h5 class="m-0 text-secondary fw-semibold d-none d-md-block">SGRA | Sistema de Gestión de Refuerzos Académicos</h5>
+        <h6 class="m-0 text-secondary fw-semibold d-block d-md-none">SGRA</h6>
+      </div>
+
+      <div class="d-flex align-items-center gap-2">
+        <div class="position-relative">
+          <button type="button" class="btn btn-profile d-flex align-items-center gap-2" (click)="toggleDropdown()">
+            <span class="fw-medium text-dark d-none d-md-inline">{{ userName() }}</span>
+            <div class="user-avatar rounded-circle text-white d-flex justify-content-center align-items-center shadow-sm">
+              {{ userInitials() }}
+            </div>
+            <i class="bi bi-chevron-down text-muted small"></i>
+          </button>
+
+          @if (showDropdown) {
+          <div class="profile-dropdown shadow-sm border">
+            <div class="dropdown-header px-3 py-3 border-bottom">
+              <p class="fw-bold mb-1">{{ userName() }}</p>
+              <span class="text-muted">{{ userRoleLabel() }}</span>
+            </div>
+            <app-role-switcher activeRoute="/coordinator"></app-role-switcher>
+            <button type="button" class="dropdown-item d-flex align-items-center gap-2 px-3 py-2"
+              (click)="openChangePasswordModal()">
+              <i class="bi bi-key"></i> Cambiar contraseña
+            </button>
+            <button type="button" class="dropdown-item text-danger d-flex align-items-center gap-2 px-3 py-2"
+              (click)="logout()">
+              <i class="bi bi-box-arrow-left"></i> Cerrar sesión
+            </button>
+          </div>
+          <div class="dropdown-backdrop" (click)="closeDropdown()"></div>
+          }
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-grow-1 p-3 p-md-4 overflow-auto">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>
+
+@if (showChangePasswordModal) {
+  <app-change-password-modal (closed)="closeChangePasswordModal()"></app-change-password-modal>
+}
+
+<!-- Chatbot IA flotante — disponible en todo el módulo de coordinación -->
+<app-ai-chat [config]="chatConfig" />
+
