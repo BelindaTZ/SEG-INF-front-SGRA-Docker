@@ -13,11 +13,11 @@ services:
   backend:
     image: sgra-backend:local
     build:
-      context: ${SGRA_BACKEND_DIR:-../back-SGRA-Docker}
+      context: ${SGRA_BACKEND_DIR:-../SEG-INF-back-SGRA-Docker}
       args:
         PG_MAJOR: ${SGRA_PG_MAJOR:-18}
     env_file:
-      - path: ${SGRA_BACKEND_ENV:-../back-SGRA-Docker/.env.docker}
+      - path: ${SGRA_BACKEND_ENV:-../SEG-INF-back-SGRA-Docker/.env.docker}
         required: false
     volumes:
       - backend-backups:/var/lib/sgra/backups

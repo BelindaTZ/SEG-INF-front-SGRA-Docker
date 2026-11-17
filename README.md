@@ -2,11 +2,11 @@
 
 ## Docker Desktop
 
-Abre Docker Desktop en modo de contenedores Linux. Coloca `front-SGRA-Docker` y
-`back-SGRA-Docker` en la misma carpeta. Prepara el archivo `back-SGRA-Docker/.env.docker`
+Abre Docker Desktop en modo de contenedores Linux. Coloca `SEG-INF-front-SGRA-Docker` y
+`SEG-INF-back-SGRA-Docker` en la misma carpeta. Prepara el archivo `SEG-INF-back-SGRA-Docker/.env.docker`
 siguiendo la sección Docker Desktop del README del backend.
 
-Desde `front-SGRA-Docker`:
+Desde `SEG-INF-front-SGRA-Docker`:
 
 ```powershell
 docker compose up --build -d
